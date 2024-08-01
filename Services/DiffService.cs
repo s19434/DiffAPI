@@ -2,9 +2,11 @@ using System.Collections.Concurrent;
 using DiffAPI.Interfaces;
 using DiffAPI.Models;
 
+namespace DiffAPI.Services;
+
 public class DiffService : IDiffService
 {
-    private readonly ConcurrentDictionary<string, DiffData> _diffStore = new();
+    private readonly ConcurrentDictionary<string, DiffData> _diffStore = new ConcurrentDictionary<string, DiffData>();
 
     public void SaveLeft(string id, string base64Data)
     {
@@ -18,7 +20,7 @@ public class DiffService : IDiffService
         diffData.Right = base64Data;
     }
 
-    public (bool Exists, string? DiffResultType, List<(int offset, int length)>? Diffs) GetDiff(string id)
+    public (bool Exists, string? DiffResultType, List<Diff>? Diffs) GetDiff(string id)
     {
         if (!_diffStore.TryGetValue(id, out var diffData) || diffData.Left == null || diffData.Right == null)
         {
@@ -35,19 +37,35 @@ public class DiffService : IDiffService
             return (true, "SizeDoNotMatch", null);
         }
 
-        var diffs = new List<(int offset, int length)>();
+        var diffs = new List<Diff>();
+        int? currentOffset = null;
+        int currentLength = 0;
+
         for (int i = 0; i < diffData.Left.Length; i++)
         {
             if (diffData.Left[i] != diffData.Right[i])
             {
-                int length = 1;
-                while (i + length < diffData.Left.Length && diffData.Left[i + length] != diffData.Right[i + length])
+                if (currentOffset == null)
                 {
-                    length++;
+                    currentOffset = i;
                 }
-                diffs.Add((i, length));
-                i += length - 1;
+                currentLength++;
             }
+            else
+            {
+                if (currentOffset != null)
+                {
+                    diffs.Add(new Diff { Offset = currentOffset.Value, Length = currentLength });
+                    currentOffset = null;
+                    currentLength = 0;
+                }
+            }
+        }
+
+        // Add the last diff if it exists
+        if (currentOffset != null)
+        {
+            diffs.Add(new Diff { Offset = currentOffset.Value, Length = currentLength });
         }
 
         return (true, "ContentDoNotMatch", diffs);
