@@ -1,5 +1,3 @@
-// Controllers/DiffController.cs
-
 using System.Text.Json;
 using DiffAPI.Interfaces;
 using Microsoft.AspNetCore.Mvc;

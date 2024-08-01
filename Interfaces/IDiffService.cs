@@ -1,5 +1,3 @@
-// Services/IDiffService.cs
-
 using DiffAPI.Models;
 
 namespace DiffAPI.Interfaces;
