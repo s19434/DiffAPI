@@ -1,34 +1,27 @@
 using DiffAPI.Interfaces;
 using DiffAPI.Services;
 
-namespace DiffAPI;
+var builder = WebApplication.CreateBuilder(args);
 
-public class Program
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddSingleton<IDiffService, DiffService>();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    public void ConfigureServices(IServiceCollection services)
-    {
-        services.AddControllers();
-        services.AddSingleton<IDiffService, DiffService>();
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-    }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
-
-        app.UseHttpsRedirection();
-        app.UseRouting();
-        app.UseAuthorization();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
-    }
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
