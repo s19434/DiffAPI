@@ -83,11 +83,11 @@ Retrieves the differences between the left and right data for a given ID.
 
   ```json
   {
-    "diffResultType": "Equals" | "SizeDoNotMatch" | "ContentDoNotMatch",
+    "diffResultType": "Equals | SizeDoNotMatch | ContentDoNotMatch",
     "diffs": [
       {
-        "offset": int,
-        "length": int
+        "offset": "int",
+        "length": "int"
       }
     ]
   }
