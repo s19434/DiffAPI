@@ -1,7 +1,7 @@
 using DiffAPI.Interfaces;
 using DiffAPI.Services;
 
-namespace IntegrationTests;
+namespace DiffAPI;
 
 public class TestStartUp
 {
