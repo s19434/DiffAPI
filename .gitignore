@@ -428,3 +428,26 @@
 /bin/Debug/net7.0/xunit.runner.reporters.netcoreapp10.dll
 /bin/Debug/net7.0/xunit.runner.utility.netcoreapp10.dll
 /bin/Debug/net7.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll
+/bin/Debug/net7.0/refs/Microsoft.AspNetCore.Hosting 2.dll
+/bin/Debug/net7.0/refs/Microsoft.AspNetCore.Mvc.ViewFeatures 2.dll
+/bin/Debug/net7.0/refs/Microsoft.AspNetCore.RequestDecompression 2.dll
+/bin/Debug/net7.0/refs/Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets 4.dll
+/bin/Debug/net7.0/refs/Microsoft.CSharp 4.dll
+/bin/Debug/net7.0/Microsoft.EntityFrameworkCore.InMemory 2.dll
+/bin/Debug/net7.0/refs/Microsoft.Extensions.Configuration.Ini 4.dll
+/bin/Debug/net7.0/it/Microsoft.TestPlatform.CommunicationUtilities.resources 2.dll
+/bin/Debug/net7.0/tr/Microsoft.TestPlatform.CoreUtilities.resources 2.dll
+/bin/Debug/net7.0/de/Microsoft.TestPlatform.CoreUtilities.resources 3.dll
+/bin/Debug/net7.0/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources 4.dll
+/bin/Debug/net7.0/de/Microsoft.VisualStudio.TestPlatform.Common.resources 2.dll
+/bin/Debug/net7.0/fr/Microsoft.VisualStudio.TestPlatform.Common.resources 2.dll
+/bin/Debug/net7.0/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources 2.dll
+/bin/Debug/net7.0/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources 3.dll
+/bin/Debug/net7.0/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources 3.dll
+/bin/Debug/net7.0/refs/System.Collections.Concurrent 4.dll
+/bin/Debug/net7.0/refs/System.Console 4.dll
+/bin/Debug/net7.0/refs/System.Runtime.CompilerServices.VisualC 4.dll
+/bin/Debug/net7.0/refs/System.Text.Json 3.dll
+/bin/Debug/net7.0/refs/System.Transactions.Local 4.dll
+/bin/Debug/net7.0/refs/System.ValueTuple 4.dll
+/bin/Debug/net7.0/refs/System.Xml.XDocument 3.dll

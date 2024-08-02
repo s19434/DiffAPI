@@ -1,7 +1,8 @@
 using DiffAPI.Services;
+using UnitTests.Helpers;
 using Xunit;
 
-namespace DiffAPI.UnitTests;
+namespace UnitTests.Services;
 
 public class DiffServiceTests
 {
