@@ -8,13 +8,13 @@ public class DiffService : IDiffService
 {
     private static readonly ConcurrentDictionary<string, DiffData> DiffStore = new();
 
-    public void SaveLeft(string id, string base64Data)
+    public void SaveLeft(string id, string? base64Data)
     {
         var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Left = base64Data;
     }
 
-    public void SaveRight(string id, string base64Data)
+    public void SaveRight(string id, string? base64Data)
     {
         var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Right = base64Data;

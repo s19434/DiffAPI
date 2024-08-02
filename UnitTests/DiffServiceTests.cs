@@ -1,4 +1,3 @@
-using DiffAPI.Interfaces;
 using DiffAPI.Services;
 using Xunit;
 
@@ -6,30 +5,32 @@ namespace DiffAPI.UnitTests;
 
 public class DiffServiceTests
 {
-    private readonly IDiffService _diffService = new DiffService();
+    private readonly DiffService _diffService = new();
 
     [Fact]
     public void TestSaveLeft()
     {
-        string id = "1";
+        const string id = "1";
         _diffService.SaveLeft(id, "AAAAAA==");
-        var (exists, _, _) = _diffService.GetDiff(id);
-        Assert.True(exists);
+        var diffData = DiffServiceHelper.GetInternalData(id);
+        Assert.NotNull(diffData);
+        Assert.Equal("AAAAAA==", diffData.Left);
     }
 
     [Fact]
     public void TestSaveRight()
     {
-        string id = "2";
+        const string id = "2";
         _diffService.SaveRight(id, "AAAAAA==");
-        var (exists, _, _) = _diffService.GetDiff(id);
-        Assert.True(exists);
+        var diffData = DiffServiceHelper.GetInternalData(id);
+        Assert.NotNull(diffData);
+        Assert.Equal("AAAAAA==", diffData.Right);
     }
 
     [Fact]
     public void TestGetDiff_Equal()
     {
-        string id = "3";
+        const string id = "3";
         _diffService.SaveLeft(id, "AAAAAA==");
         _diffService.SaveRight(id, "AAAAAA==");
 
@@ -42,7 +43,7 @@ public class DiffServiceTests
     [Fact]
     public void TestGetDiff_SizeDoNotMatch()
     {
-        string id = "4";
+        const string id = "4";
         _diffService.SaveLeft(id, "AAA=");
         _diffService.SaveRight(id, "AAAAAA==");
 
@@ -55,7 +56,7 @@ public class DiffServiceTests
     [Fact]
     public void TestGetDiff_ContentDoNotMatch()
     {
-        string id = "5";
+        const string id = "5";
         _diffService.SaveLeft(id, "AAAAAA==");
         _diffService.SaveRight(id, "AQABAQ==");
 
@@ -75,14 +76,18 @@ public class DiffServiceTests
     [Fact]
     public void TestSaveLeft_NullData()
     {
-        string id = "6";
-        Assert.Throws<ArgumentNullException>(() => _diffService.SaveLeft(id, null));
+        const string id = "6";
+        _diffService.SaveLeft(id, null);
+        var diffData = DiffServiceHelper.GetInternalData(id);
+        Assert.Null(diffData?.Left);
     }
 
     [Fact]
     public void TestSaveRight_NullData()
     {
-        string id = "7";
-        Assert.Throws<ArgumentNullException>(() => _diffService.SaveRight(id, null));
+        const string id = "7";
+        _diffService.SaveRight(id, null);
+        var diffData = DiffServiceHelper.GetInternalData(id);
+        Assert.Null(diffData?.Right);
     }
 }
