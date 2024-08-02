@@ -11,26 +11,29 @@ public class DiffServiceTests
     [Fact]
     public void TestSaveLeft()
     {
-        _diffService.SaveLeft("1", "AAAAAA==");
-        var (exists, _, _) = _diffService.GetDiff("1");
+        string id = "1";
+        _diffService.SaveLeft(id, "AAAAAA==");
+        var (exists, _, _) = _diffService.GetDiff(id);
         Assert.True(exists);
     }
 
     [Fact]
     public void TestSaveRight()
     {
-        _diffService.SaveRight("1", "AAAAAA==");
-        var (exists, _, _) = _diffService.GetDiff("1");
+        string id = "2";
+        _diffService.SaveRight(id, "AAAAAA==");
+        var (exists, _, _) = _diffService.GetDiff(id);
         Assert.True(exists);
     }
 
     [Fact]
     public void TestGetDiff_Equal()
     {
-        _diffService.SaveLeft("1", "AAAAAA==");
-        _diffService.SaveRight("1", "AAAAAA==");
+        string id = "3";
+        _diffService.SaveLeft(id, "AAAAAA==");
+        _diffService.SaveRight(id, "AAAAAA==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff("1");
+        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
         Assert.True(exists);
         Assert.Equal("Equals", diffResultType);
         Assert.Null(diffs);
@@ -39,10 +42,11 @@ public class DiffServiceTests
     [Fact]
     public void TestGetDiff_SizeDoNotMatch()
     {
-        _diffService.SaveLeft("1", "AAA=");
-        _diffService.SaveRight("1", "AAAAAA==");
+        string id = "4";
+        _diffService.SaveLeft(id, "AAA=");
+        _diffService.SaveRight(id, "AAAAAA==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff("1");
+        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
         Assert.True(exists);
         Assert.Equal("SizeDoNotMatch", diffResultType);
         Assert.Null(diffs);
@@ -51,10 +55,11 @@ public class DiffServiceTests
     [Fact]
     public void TestGetDiff_ContentDoNotMatch()
     {
-        _diffService.SaveLeft("1", "AAAAAA==");
-        _diffService.SaveRight("1", "AQABAQ==");
+        string id = "5";
+        _diffService.SaveLeft(id, "AAAAAA==");
+        _diffService.SaveRight(id, "AQABAQ==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff("1");
+        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
         Assert.True(exists);
         Assert.Equal("ContentDoNotMatch", diffResultType);
         Assert.NotNull(diffs);
@@ -65,5 +70,19 @@ public class DiffServiceTests
 
         Assert.Equal(2, diffs[1].Offset);
         Assert.Equal(2, diffs[1].Length);
+    }
+
+    [Fact]
+    public void TestSaveLeft_NullData()
+    {
+        string id = "6";
+        Assert.Throws<ArgumentNullException>(() => _diffService.SaveLeft(id, null));
+    }
+
+    [Fact]
+    public void TestSaveRight_NullData()
+    {
+        string id = "7";
+        Assert.Throws<ArgumentNullException>(() => _diffService.SaveRight(id, null));
     }
 }

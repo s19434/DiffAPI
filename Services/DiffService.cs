@@ -6,23 +6,23 @@ namespace DiffAPI.Services;
 
 public class DiffService : IDiffService
 {
-    private readonly ConcurrentDictionary<string, DiffData> _diffStore = new ConcurrentDictionary<string, DiffData>();
+    private static readonly ConcurrentDictionary<string, DiffData> DiffStore = new();
 
     public void SaveLeft(string id, string base64Data)
     {
-        var diffData = _diffStore.GetOrAdd(id, new DiffData { Id = id });
+        var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Left = base64Data;
     }
 
     public void SaveRight(string id, string base64Data)
     {
-        var diffData = _diffStore.GetOrAdd(id, new DiffData { Id = id });
+        var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Right = base64Data;
     }
 
     public (bool Exists, string? DiffResultType, List<Diff>? Diffs) GetDiff(string id)
     {
-        if (!_diffStore.TryGetValue(id, out var diffData) || diffData.Left == null || diffData.Right == null)
+        if (!DiffStore.TryGetValue(id, out var diffData) || diffData.Left == null || diffData.Right == null)
         {
             return (false, null, null);
         }
@@ -32,7 +32,10 @@ public class DiffService : IDiffService
             return (true, "Equals", null);
         }
 
-        if (diffData.Left.Length != diffData.Right.Length)
+        var leftBytes = Convert.FromBase64String(diffData.Left);
+        var rightBytes = Convert.FromBase64String(diffData.Right);
+
+        if (leftBytes.Length != rightBytes.Length)
         {
             return (true, "SizeDoNotMatch", null);
         }
@@ -41,15 +44,19 @@ public class DiffService : IDiffService
         int? currentOffset = null;
         int currentLength = 0;
 
-        for (int i = 0; i < diffData.Left.Length; i++)
+        for (int i = 0; i < leftBytes.Length; i++)
         {
-            if (diffData.Left[i] != diffData.Right[i])
+            if (leftBytes[i] != rightBytes[i])
             {
                 if (currentOffset == null)
                 {
                     currentOffset = i;
+                    currentLength = 1;
                 }
-                currentLength++;
+                else
+                {
+                    currentLength++;
+                }
             }
             else
             {
