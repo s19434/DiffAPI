@@ -13,6 +13,7 @@ public class DiffIntegrationTests : IClassFixture<CustomWebApplicationFactory>
         _client = factory.CreateClient();
     }
 
+    // Test to save left and right data and verify they are equal
     [Fact]
     public async Task TestSaveLeftAndRightAndGetDiff_Equal()
     {
@@ -33,9 +34,11 @@ public class DiffIntegrationTests : IClassFixture<CustomWebApplicationFactory>
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
 
+        // Assert the response contains "Equals" diff result
         Assert.Contains("\"diffResultType\":\"Equals\"", responseString);
     }
 
+    // Test to save left and right data and verify they have different sizes
     [Fact]
     public async Task TestSaveLeftAndRightAndGetDiff_SizeDoNotMatch()
     {
@@ -56,9 +59,11 @@ public class DiffIntegrationTests : IClassFixture<CustomWebApplicationFactory>
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
 
+        // Assert the response contains "SizeDoNotMatch" diff result
         Assert.Contains("\"diffResultType\":\"SizeDoNotMatch\"", responseString);
     }
 
+    // Test to save left and right data and verify they have different content
     [Fact]
     public async Task TestSaveLeftAndRightAndGetDiff_ContentDoNotMatch()
     {
@@ -79,6 +84,7 @@ public class DiffIntegrationTests : IClassFixture<CustomWebApplicationFactory>
         response.EnsureSuccessStatusCode();
         var responseString = await response.Content.ReadAsStringAsync();
 
+        // Assert the response contains "ContentDoNotMatch" diff result and correct differences
         Assert.Contains("\"diffResultType\":\"ContentDoNotMatch\"", responseString);
         Assert.Contains("\"offset\":0", responseString);
         Assert.Contains("\"length\":1", responseString);

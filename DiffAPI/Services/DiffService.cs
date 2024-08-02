@@ -6,30 +6,33 @@ namespace DiffAPI.Services;
 
 public class DiffService : IDiffService
 {
-    private static readonly ConcurrentDictionary<string, DiffData> DiffStore = new();
+    public static readonly ConcurrentDictionary<string, DiffData> DiffStore = new();
 
-    public void SaveLeft(string id, string? base64Data)
+    public Task SaveLeftAsync(string id, string? base64Data)
     {
         var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Left = base64Data;
+        return Task.CompletedTask;
     }
 
-    public void SaveRight(string id, string? base64Data)
+    public Task SaveRightAsync(string id, string? base64Data)
     {
         var diffData = DiffStore.GetOrAdd(id, new DiffData { Id = id });
         diffData.Right = base64Data;
+        return Task.CompletedTask;
     }
 
-    public (bool Exists, string? DiffResultType, List<Diff>? Diffs) GetDiff(string id)
+    // Asynchronously get the differences between left and right data
+    public Task<(bool Exists, string? DiffResultType, List<Diff>? Diffs)> GetDiffAsync(string id)
     {
         if (!DiffStore.TryGetValue(id, out var diffData) || diffData.Left == null || diffData.Right == null)
         {
-            return (false, null, null);
+            return Task.FromResult<(bool, string?, List<Diff>?)>((false, null, null));
         }
 
         if (diffData.Left == diffData.Right)
         {
-            return (true, "Equals", null);
+            return Task.FromResult<(bool, string?, List<Diff>?)>((true, "Equals", null));
         }
 
         var leftBytes = Convert.FromBase64String(diffData.Left);
@@ -37,13 +40,14 @@ public class DiffService : IDiffService
 
         if (leftBytes.Length != rightBytes.Length)
         {
-            return (true, "SizeDoNotMatch", null);
+            return Task.FromResult<(bool, string?, List<Diff>?)>((true, "SizeDoNotMatch", null));
         }
 
         var diffs = new List<Diff>();
         int? currentOffset = null;
         int currentLength = 0;
 
+        // Calculate differences
         for (int i = 0; i < leftBytes.Length; i++)
         {
             if (leftBytes[i] != rightBytes[i])
@@ -75,6 +79,6 @@ public class DiffService : IDiffService
             diffs.Add(new Diff { Offset = currentOffset.Value, Length = currentLength });
         }
 
-        return (true, "ContentDoNotMatch", diffs);
+        return Task.FromResult<(bool, string?, List<Diff>?)>((true, "ContentDoNotMatch", diffs));
     }
 }

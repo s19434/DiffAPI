@@ -1,5 +1,4 @@
 using DiffAPI.Services;
-using UnitTests.Helpers;
 using Xunit;
 
 namespace UnitTests.Services;
@@ -8,60 +7,65 @@ public class DiffServiceTests
 {
     private readonly DiffService _diffService = new();
 
+    // Test to save data to the left side and verify it
     [Fact]
-    public void TestSaveLeft()
+    public async Task TestSaveLeftAsync()
     {
         const string id = "1";
-        _diffService.SaveLeft(id, "AAAAAA==");
-        var diffData = DiffServiceHelper.GetInternalData(id);
+        await _diffService.SaveLeftAsync(id, "AAAAAA==");
+        DiffService.DiffStore.TryGetValue(id, out var diffData);
         Assert.NotNull(diffData);
         Assert.Equal("AAAAAA==", diffData.Left);
     }
 
+    // Test to save data to the right side and verify it
     [Fact]
-    public void TestSaveRight()
+    public async Task TestSaveRightAsync()
     {
         const string id = "2";
-        _diffService.SaveRight(id, "AAAAAA==");
-        var diffData = DiffServiceHelper.GetInternalData(id);
+        await _diffService.SaveRightAsync(id, "AAAAAA==");
+        DiffService.DiffStore.TryGetValue(id, out var diffData);
         Assert.NotNull(diffData);
         Assert.Equal("AAAAAA==", diffData.Right);
     }
 
+    // Test to verify if two equal data parts return "Equals"
     [Fact]
-    public void TestGetDiff_Equal()
+    public async Task TestGetDiffAsync_Equal()
     {
         const string id = "3";
-        _diffService.SaveLeft(id, "AAAAAA==");
-        _diffService.SaveRight(id, "AAAAAA==");
+        await _diffService.SaveLeftAsync(id, "AAAAAA==");
+        await _diffService.SaveRightAsync(id, "AAAAAA==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
+        var (exists, diffResultType, diffs) = await _diffService.GetDiffAsync(id);
         Assert.True(exists);
         Assert.Equal("Equals", diffResultType);
         Assert.Null(diffs);
     }
 
+    // Test to verify if different sized data parts return "SizeDoNotMatch"
     [Fact]
-    public void TestGetDiff_SizeDoNotMatch()
+    public async Task TestGetDiffAsync_SizeDoNotMatch()
     {
         const string id = "4";
-        _diffService.SaveLeft(id, "AAA=");
-        _diffService.SaveRight(id, "AAAAAA==");
+        await _diffService.SaveLeftAsync(id, "AAA=");
+        await _diffService.SaveRightAsync(id, "AAAAAA==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
+        var (exists, diffResultType, diffs) = await _diffService.GetDiffAsync(id);
         Assert.True(exists);
         Assert.Equal("SizeDoNotMatch", diffResultType);
         Assert.Null(diffs);
     }
 
+    // Test to verify if different content data parts return "ContentDoNotMatch" with correct differences
     [Fact]
-    public void TestGetDiff_ContentDoNotMatch()
+    public async Task TestGetDiffAsync_ContentDoNotMatch()
     {
         const string id = "5";
-        _diffService.SaveLeft(id, "AAAAAA==");
-        _diffService.SaveRight(id, "AQABAQ==");
+        await _diffService.SaveLeftAsync(id, "AAAAAA==");
+        await _diffService.SaveRightAsync(id, "AQABAQ==");
 
-        var (exists, diffResultType, diffs) = _diffService.GetDiff(id);
+        var (exists, diffResultType, diffs) = await _diffService.GetDiffAsync(id);
         Assert.True(exists);
         Assert.Equal("ContentDoNotMatch", diffResultType);
         Assert.NotNull(diffs);
@@ -74,21 +78,23 @@ public class DiffServiceTests
         Assert.Equal(2, diffs[1].Length);
     }
 
+    // Test to verify handling of null data on the left side
     [Fact]
-    public void TestSaveLeft_NullData()
+    public async Task TestSaveLeftAsync_NullData()
     {
         const string id = "6";
-        _diffService.SaveLeft(id, null);
-        var diffData = DiffServiceHelper.GetInternalData(id);
+        await _diffService.SaveLeftAsync(id, null);
+        DiffService.DiffStore.TryGetValue(id, out var diffData);
         Assert.Null(diffData?.Left);
     }
 
+    // Test to verify handling of null data on the right side
     [Fact]
-    public void TestSaveRight_NullData()
+    public async Task TestSaveRightAsync_NullData()
     {
         const string id = "7";
-        _diffService.SaveRight(id, null);
-        var diffData = DiffServiceHelper.GetInternalData(id);
+        await _diffService.SaveRightAsync(id, null);
+        DiffService.DiffStore.TryGetValue(id, out var diffData);
         Assert.Null(diffData?.Right);
     }
 }
