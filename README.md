@@ -105,11 +105,6 @@ Retrieves the differences between the left and right data for a given ID.
    dotnet test IntegrationTests/IntegrationTests.csproj
    ```
    
-3. **Run integration tests:**
-   ```bash
-   dotnet test IntegrationTests/IntegrationTests.csproj
-   ```
-   
 ## Project Structure
 
 ```
